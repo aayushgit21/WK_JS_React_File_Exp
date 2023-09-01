@@ -7,6 +7,7 @@ export const File = (props) => {
         el.deleted = true;
         props.setInputName("");
         console.log("deleted.");
+        console.log(store);
       } else if (el.children != null) {
         deleteNode(el.children, id);
       }
