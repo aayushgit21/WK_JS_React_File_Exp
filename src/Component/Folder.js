@@ -4,6 +4,30 @@ const generateId = () => {
   uniqueId++;
   return uniqueId;
 };
+export const deleteNode = (store, id, parentId,props) => {
+  console.log("this is store",store);
+  console.log("deleteNode called with id:", id, "parentId:", parentId);
+  
+  if (parentId === -1) {
+    window.alert("Root can't be deleted");
+    return;
+  }
+
+  props.data.map((item) => {
+    console.log("inside forEach, item.id:", item.id);
+    console.log(item);
+    
+    if (item.id === parentId) {
+      console.log("parent found, item.id:", item.id);
+      item.children = item.children.filter((child) => child.id !== id);
+      props.setStore(store)
+      console.log("Item deleted");
+      console.log("this is store",store);
+    } else if (item.children !== null) {
+      deleteNode(item.children, id, parentId);
+    }
+  });
+};
 export const Folder = (props) => {
   console.log("props.data: ",props.data);
   const addFile = (store, id) => {
@@ -51,30 +75,7 @@ export const Folder = (props) => {
     });
     // props.setStore(updatedStore);
   };
-  const deleteNode = (store, id, parentId) => {
-    console.log("this is store",store);
-    console.log("deleteNode called with id:", id, "parentId:", parentId);
-    
-    if (parentId === -1) {
-      window.alert("Root can't be deleted");
-      return;
-    }
-  
-    props.data.map((item) => {
-      console.log("inside forEach, item.id:", item.id);
-      console.log(item);
-      
-      if (item.id === parentId) {
-        console.log("parent found, item.id:", item.id);
-        item.children = item.children.filter((child) => child.id !== id);
-        props.setStore(store)
-        console.log("Item deleted");
-        console.log("this is store",store);
-      } else if (item.children !== null) {
-        deleteNode(item.children, id, parentId);
-      }
-    });
-  };
+
   
   return (
     <div>
@@ -93,7 +94,7 @@ export const Folder = (props) => {
       </button>
       <button
         style={{ margin: "3px", borderRadius: "20px" }}
-        onClick={() => deleteNode(props.data, props.id,props.parentId)}
+        onClick={() => deleteNode(props.data, props.id,props.parentId,props)}
       >
         🗑
       </button>
