@@ -1,18 +1,19 @@
 import React from "react";
-import { File } from "./File";
 let uniqueId = 0;
 const generateId = () => {
   uniqueId++;
   return uniqueId;
 };
-
 export const Folder = (props) => {
+  console.log("props.data: ",props.data);
   const addFile = (store, id) => {
+    console.log("store inside: ",store)
     const obj = {
       id: generateId(),
       name: props.nameToCreate,
       type: "file",
       children: null,
+      parentId: id,
       deleted: false,
     };
 
@@ -34,6 +35,7 @@ export const Folder = (props) => {
       name: props.nameToCreate,
       type: "folder",
       children: [],
+      parentId: id,
       deleted: false,
     };
 
@@ -49,18 +51,31 @@ export const Folder = (props) => {
     });
     // props.setStore(updatedStore);
   };
-  const deleteNode = (store, id) => {
-    store.map((el) => {
-      if (el.id === id) {
-        el.deleted = true;
-        props.setInputName("");
-        console.log("deleted.");
-        console.log(store);
-      } else if (el.children != null) {
-        deleteNode(el.children, id);
+  const deleteNode = (store, id, parentId) => {
+    console.log("this is store",store);
+    console.log("deleteNode called with id:", id, "parentId:", parentId);
+    
+    if (parentId === -1) {
+      window.alert("Root can't be deleted");
+      return;
+    }
+  
+    props.data.map((item) => {
+      console.log("inside forEach, item.id:", item.id);
+      console.log(item);
+      
+      if (item.id === parentId) {
+        console.log("parent found, item.id:", item.id);
+        item.children = item.children.filter((child) => child.id !== id);
+        props.setStore(store)
+        console.log("Item deleted");
+        console.log("this is store",store);
+      } else if (item.children !== null) {
+        deleteNode(item.children, id, parentId);
       }
     });
   };
+  
   return (
     <div>
       <label style={{ margin: "3px" }}>📁{props.inputName}</label>
@@ -78,7 +93,7 @@ export const Folder = (props) => {
       </button>
       <button
         style={{ margin: "3px", borderRadius: "20px" }}
-        onClick={() => deleteNode(props.store, props.id)}
+        onClick={() => deleteNode(props.data, props.id,props.parentId)}
       >
         🗑
       </button>

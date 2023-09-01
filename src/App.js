@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import "./App.css";
 import { FileExp } from "./Component/FileExp";
+
 
 function App() {
   const [inputName, setInputName] = useState("");
@@ -10,11 +11,16 @@ function App() {
       name: "Root",
       type: "folder",
       children: [],
+      parentId:-1,
       deleted: false,
-    },
+    }
   ]);
+  useEffect(() => {
+    console.log("store has been updated:", store);
+  }, [store]);
   const [render, setRender] = useState(false);
-  console.log("hii");
+  console.log("hii app me aagaya");
+  console.log(store);
   return (
     <div className="App">
       <div className="header" style={{ marginInline: "20px" }}>
@@ -37,6 +43,8 @@ function App() {
           store={store}
           inputName={inputName}
           setInputName={setInputName}
+          storeMain={store}
+          setStore={setStore}
         />
       </div>
     </div>
@@ -44,3 +52,4 @@ function App() {
 }
 
 export default App;
+
